@@ -75,7 +75,7 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/news_card_separator"
+            android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="5dp"

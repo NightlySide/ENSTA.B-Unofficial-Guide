@@ -52,14 +52,14 @@
         android:layout_marginEnd="24dp"
         android:autofillHints="Adresse e-mail ENSTA B."
         android:hint="Adresse e-mail ENSTA B."
-        android:inputType="text"
+        android:inputType="text|textEmailAddress"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/display_name"
+        android:id="@+id/colloc_edit_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

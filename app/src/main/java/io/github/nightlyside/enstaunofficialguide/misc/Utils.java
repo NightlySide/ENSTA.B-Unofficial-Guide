@@ -1,4 +1,4 @@
-package io.github.nightlyside.enstaunofficialguide;
+package io.github.nightlyside.enstaunofficialguide.misc;
 
 import java.util.HashSet;
 import java.util.Iterator;

@@ -20,9 +20,11 @@ import com.google.android.material.navigation.NavigationView;
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
 import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
-import io.github.nightlyside.enstaunofficialguide.fragments.FirstRunDialogFragment;
+import io.github.nightlyside.enstaunofficialguide.dialogs.FirstRunDialogFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
+import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (sharedPref.getBoolean("isFirstRun", true))
         {
             SharedPreferences.Editor editor = sharedPref.edit();
-            //editor.putBoolean("isFirstRun", false);
+            editor.putBoolean("isFirstRun", false);
             editor.commit();
 
             FirstRunDialogFragment dialogFragment = new FirstRunDialogFragment();
@@ -126,6 +128,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent registerintent = new Intent(this, RegisterActivity.class);
                 startActivity(registerintent);
                 break;
+            case R.id.activity_main_drawer_admin_collocs:
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new ShowAndEditCollocsFragment());
+                ft.commit();
+                break;
             default:
                 break;
         }
@@ -163,6 +170,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (loggedUser != null && loggedUser.isConnected) {
             navmenu.findItem(R.id.activity_main_drawer_profile).setTitle("Bonjour " + loggedUser.display_name + " !");
             navmenu.findItem(R.id.activity_main_drawer_register).setVisible(false);
+        }
+
+        if (loggedUser == null || !loggedUser.isConnected || !RoleLevel.getLevelFromRole(loggedUser.role).isAllowed(RoleLevel.Level.ADMIN)) {
+            navmenu.findItem(R.id.activity_main_drawer_admin_collocs).setVisible(false);
+            navmenu.findItem(R.id.activity_main_drawer_admin_users).setVisible(false);
         }
     }
 

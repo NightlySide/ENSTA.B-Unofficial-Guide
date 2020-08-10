@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.github.nightlyside.enstaunofficialguide.R;
-import io.github.nightlyside.enstaunofficialguide.Utils;
+import io.github.nightlyside.enstaunofficialguide.misc.Utils;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;

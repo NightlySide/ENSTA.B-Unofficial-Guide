@@ -1,4 +1,4 @@
-package io.github.nightlyside.enstaunofficialguide.fragments;
+package io.github.nightlyside.enstaunofficialguide.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

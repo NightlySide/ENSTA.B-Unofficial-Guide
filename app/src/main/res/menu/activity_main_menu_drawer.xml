@@ -37,12 +37,20 @@
                     android:id="@+id/activity_main_drawer_profile"
                     android:icon="@drawable/ic_account"
                     android:title="Se connecter" />
-            </group>
-            <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/activity_main_drawer_register"
                     android:icon="@drawable/ic_register"
                     android:title="S'inscrire" />
+            </group>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_admin_users"
+                    android:icon="@drawable/ic_account"
+                    android:title="Gérer les utilisateurs" />
+                <item
+                    android:id="@+id/activity_main_drawer_admin_collocs"
+                    android:icon="@drawable/ic_colloc_bar_map"
+                    android:title="Gérer les collocs" />
             </group>
         </menu>
     </item>
