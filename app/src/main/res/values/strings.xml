@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ENSTA B. Unofficial Guide</string>
+    <string name="title_activity_maps">Carte des collocs et des bars</string>
+    <string name="title_activity_basicactivity">Page d\'accueil</string>
+
+    <string name="preference_key_file">monfichierdesauvegardenonofficiel</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Used in Login Activity -->
+    <string name="title_activity_login">Se connecter au Guide</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Se connecter</string>
+    <string name="action_sign_in_short">Se connecter</string>
+    <string name="welcome">"Bienvenue sur le guide non officiel !"</string>
+    <string name="invalid_username">Username non valide</string>
+    <string name="invalid_password">Le mot de passe doit faire >5 lettres</string>
+    <string name="login_failed">"Connection échouée"</string>
+</resources>

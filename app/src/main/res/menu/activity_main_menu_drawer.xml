@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single"
+           android:id="@+id/grp1">
+        <item
+            android:id="@+id/activity_main_drawer_news"
+            android:icon="@drawable/ic_dashboard_white"
+            android:title="Fil d'actualité" />
+    </group>
+
+    <item android:title="Guides">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_assos_list"
+                    android:icon="@drawable/ic_assos_list"
+                    android:title="Liste des associations" />
+                <item
+                    android:id="@+id/activity_main_drawer_assos_schedule"
+                    android:icon="@drawable/ic_assos_schedule"
+                    android:title="Horaires des associations" />
+                <item
+                    android:id="@+id/activity_main_drawer_map"
+                    android:icon="@drawable/ic_colloc_bar_map"
+                    android:title="Carte des collocs et bars" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Espace Utilisateur">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_profile"
+                    android:icon="@drawable/ic_account"
+                    android:title="Se connecter" />
+            </group>
+        </menu>
+    </item>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/activity_main_drawer_settings"
+            android:icon="@drawable/ic_settings_applications"
+            android:title="Paramètres" />
+    </group>
+</menu>
