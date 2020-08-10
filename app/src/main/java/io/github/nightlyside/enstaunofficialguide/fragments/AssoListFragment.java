@@ -17,50 +17,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.nightlyside.enstaunofficialguide.R;
-import io.github.nightlyside.enstaunofficialguide.data_structure.News;
+import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
-import io.github.nightlyside.enstaunofficialguide.recyclerview.NewsAdapter;
+import io.github.nightlyside.enstaunofficialguide.recyclerview.AssoListAdapter;
 
-public class NewsFragment extends Fragment {
+public class AssoListFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private NewsAdapter newsAdapter;
-    private List<News> newsList = new ArrayList<News>();
+    private AssoListAdapter assoListAdapter;
+    private List<Association> assoList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.fragment_news, parent, false);
+        return inflater.inflate(R.layout.fragment_asso_list, parent, false);
     }
 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        recyclerView = (RecyclerView) view.findViewById(R.id.news_recycler_view);
+        recyclerView = view.findViewById(R.id.assolist_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        newsAdapter = new NewsAdapter(newsList);
-        recyclerView.setAdapter(newsAdapter);
+        assoListAdapter = new AssoListAdapter(assoList);
+        recyclerView.setAdapter(assoListAdapter);
 
-        getLatestNews();
+        getAssosList();
     }
 
-    private void getLatestNews() {
-        String query_url = "news.php";
+    private void getAssosList() {
+        String query_url = "asso-list.php";
         NetworkManager.getInstance().makeJSONArrayRequest(query_url, new NetworkResponseListener<String>() {
             @Override
             public void getResult(String result) throws JSONException {
                 JSONArray response = new JSONArray(result);
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
-                    News n = new News(obj.getInt("id"),
-                            obj.getString("title"),
-                            obj.getString("date"),
-                            obj.getString("display_name"),
-                            obj.getString("texte"));
-                    newsList.add(n);
+                    Association a = new Association(obj.getInt("id"),
+                            obj.getString("name"),
+                            obj.getString("is_open_to_register").equals("1"),
+                            obj.getString("description"));
+                    assoList.add(a);
                 }
-                newsAdapter.notifyDataSetChanged();
+                assoListAdapter.notifyDataSetChanged();
             }
         });
     }

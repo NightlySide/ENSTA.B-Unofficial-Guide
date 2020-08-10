@@ -1,6 +1,8 @@
 package io.github.nightlyside.enstaunofficialguide.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +19,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
+import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.FirstRunDialogFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
@@ -61,6 +65,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         invalidateOptionsMenu();
 
         this.configureNavigationView();
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.preference_key_file), Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean("isFirstRun", true))
+        {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            //editor.putBoolean("isFirstRun", false);
+            editor.commit();
+
+            FirstRunDialogFragment dialogFragment = new FirstRunDialogFragment();
+            dialogFragment.show(getSupportFragmentManager().beginTransaction(), "First run message");
+        }
     }
 
     @Override
@@ -87,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.activity_main_frame_layout, new NewsFragment());
                 ft.commit();
                 break;
+            case R.id.activity_main_drawer_assos_list :
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new AssoListFragment());
+                ft.commit();
+                break;
             case R.id.activity_main_drawer_map:
                 Intent mapintent = new Intent(this, MapsActivity.class);
                 startActivity(mapintent);
@@ -101,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent loginintent = new Intent(this, LoginActivity.class);
                     startActivity(loginintent);
                 }
+                break;
+            case R.id.activity_main_drawer_register:
+                Intent registerintent = new Intent(this, RegisterActivity.class);
+                startActivity(registerintent);
                 break;
             default:
                 break;
@@ -138,18 +162,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (loggedUser != null && loggedUser.isConnected) {
             navmenu.findItem(R.id.activity_main_drawer_profile).setTitle("Bonjour " + loggedUser.display_name + " !");
+            navmenu.findItem(R.id.activity_main_drawer_register).setVisible(false);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main_menu_drawer, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         configureNavigationView();
+
         return super.onPrepareOptionsMenu(menu);
     }
 

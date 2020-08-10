@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
@@ -17,17 +19,17 @@ public class User {
     public int id;
     public String username;
     public String display_name;
-    public String password;
     public String role;
     public String jwt_token;
     public boolean isConnected;
+    public HashSet<Integer> assosJoined;
 
-    public User(int id, String username, String display_name, String password, String role) {
+    public User(int id, String username, String display_name, String role, HashSet<Integer> assosJoined) {
         this.id = id;
         this.username = username;
         this.display_name = display_name;
-        this.password = password;
         this.role = role;
+        this.assosJoined = assosJoined;
     }
 
     public void setToken(String jwt_token) {
@@ -38,18 +40,24 @@ public class User {
     public void disconnect(Context context) {
         id = -1;
         username = null;
-        password = null;
         role = null;
         jwt_token = null;
         isConnected = false;
 
-        // Writing to the shared preferences
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_key_file), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        Gson gson = new Gson();
-        String userjson = gson.toJson(this);
-        editor.putString("userData", userjson);
-        editor.apply();
+        saveUserToSharedPreferences(context);
+    }
+
+    static public void updateUserFromCurrentJWTToken(final Context context, final String jwt_token, final NetworkResponseListener<Boolean> listener) {
+        String query_string = "update-user.php?token="+jwt_token;
+        NetworkManager.getInstance().makeJSONRequest(query_string, new NetworkResponseListener<String>() {
+            @Override
+            public void getResult(String result) throws JSONException {
+                JSONObject response = new JSONObject(result);
+                if (response.getString("message").equals("Sucessful update.")) {
+                    User.saveUserFromJWTToken(context, response.getString("jwt"), listener);
+                }
+            }
+        });
     }
 
     static public void saveUserFromJWTToken(final Context context, final String jwt_token, final NetworkResponseListener<Boolean> listener) {
@@ -60,22 +68,24 @@ public class User {
                 JSONObject response = new JSONObject(result);
                 JSONObject userData = response.getJSONObject("data");
 
+                // Creating the club list
+                HashSet<Integer> assosList = new HashSet<>();
+                if (!userData.getString("assos_joined").equals("")) {
+                    String[] id_list = userData.getString("assos_joined").split(",");
+                    for (String s : id_list) {
+                        assosList.add(Integer.valueOf(s.trim()));
+                    }
+                }
+
                 // Creating the user
                 User u = new User(userData.getInt("id"),
                              userData.getString("username"),
                              userData.getString("display_name"),
-                             userData.getString("password"),
-                             userData.getString("role"));
+                             userData.getString("role"),
+                             assosList);
                 u.setToken(jwt_token);
                 u.isConnected = true;
-
-                // Writing to the shared preferences
-                SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_key_file), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                Gson gson = new Gson();
-                String userjson = gson.toJson(u);
-                editor.putString("userData", userjson);
-                editor.apply();
+                u.saveUserToSharedPreferences(context);
 
                 listener.getResult(true);
             }
@@ -91,4 +101,15 @@ public class User {
         // Si c'est pas null on retourne la classe
         return gson.fromJson(userjson, User.class);
     }
+
+    public void saveUserToSharedPreferences(Context context) {
+        // Writing to the shared preferences
+        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_key_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        String userjson = gson.toJson(this);
+        editor.putString("userData", userjson);
+        editor.apply();
+    }
+
 }
