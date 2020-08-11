@@ -111,8 +111,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         String name = obj.getString("name");
                         String adresse = obj.getString("adresse");
                         String description = obj.getString("description");
+                        String bar_ou_colloc = obj.getString("colloc_ou_bar");
 
-                        Colloc col = new Colloc(id, name, adresse, description);
+                        Colloc col = new Colloc(id, name, adresse, description, bar_ou_colloc);
                         collocs.add(col);
 
                         // adding it on the map

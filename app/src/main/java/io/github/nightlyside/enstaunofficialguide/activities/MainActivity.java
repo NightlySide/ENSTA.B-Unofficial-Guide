@@ -24,6 +24,7 @@ import io.github.nightlyside.enstaunofficialguide.dialogs.FirstRunDialogFragment
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 
@@ -127,6 +128,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.activity_main_drawer_register:
                 Intent registerintent = new Intent(this, RegisterActivity.class);
                 startActivity(registerintent);
+                break;
+            case R.id.activity_main_drawer_admin_users:
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new ShowAndEditUsersFragment());
+                ft.commit();
                 break;
             case R.id.activity_main_drawer_admin_collocs:
                 ft = getSupportFragmentManager().beginTransaction();

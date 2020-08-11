@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nom d'utilisateur (email ENSTA)" />
+
+        <EditText
+            android:id="@+id/user_name_editview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="john.doe@ensta-bretagne.org"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/user_display_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nom complet" />
+
+        <EditText
+            android:id="@+id/user_display_name_editview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="John Doe"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/user_password_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mot de passe" />
+
+        <EditText
+            android:id="@+id/user_password_editview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Mot de passe inchangé"
+            android:inputType="textPersonName|textPassword" />
+
+        <LinearLayout
+            android:id="@+id/btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Annuler" />
+
+            <Button
+                android:id="@+id/commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Valider" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

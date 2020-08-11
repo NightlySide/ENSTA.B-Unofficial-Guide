@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.github.nightlyside.enstaunofficialguide.R;
-import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
+import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
 
 public class ShowCollocsAdapter extends RecyclerView.Adapter<ShowCollocsHolder> {
 
@@ -62,12 +62,14 @@ public class ShowCollocsAdapter extends RecyclerView.Adapter<ShowCollocsHolder> 
     };
     final SortedList<Colloc> collocList = new SortedList<>(Colloc.class, mCallback);
 
-    public ShowCollocsAdapter() { }
+    private ShowAndEditCollocsFragment parent;
+
+    public ShowCollocsAdapter(ShowAndEditCollocsFragment parent) {this.parent = parent;}
 
     @Override
     public ShowCollocsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.editable_card, parent, false);
-        return new ShowCollocsHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_editable, parent, false);
+        return new ShowCollocsHolder(this.parent, view);
     }
 
     @Override
@@ -98,6 +100,12 @@ public class ShowCollocsAdapter extends RecyclerView.Adapter<ShowCollocsHolder> 
         for (Colloc model : models) {
             collocList.remove(model);
         }
+        collocList.endBatchedUpdates();
+    }
+
+    public void clear() {
+        collocList.beginBatchedUpdates();
+        collocList.clear();
         collocList.endBatchedUpdates();
     }
 

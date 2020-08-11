@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
+import java.util.Objects;
 
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
@@ -20,13 +21,15 @@ public class User {
     public String username;
     public String display_name;
     public String role;
+    public String password;
     public String jwt_token;
     public boolean isConnected;
     public HashSet<Integer> assosJoined;
 
-    public User(int id, String username, String display_name, String role, HashSet<Integer> assosJoined) {
+    public User(int id, String username, String password, String display_name, String role, HashSet<Integer> assosJoined) {
         this.id = id;
         this.username = username;
+        this.password = password;
         this.display_name = display_name;
         this.role = role;
         this.assosJoined = assosJoined;
@@ -80,6 +83,7 @@ public class User {
                 // Creating the user
                 User u = new User(userData.getInt("id"),
                              userData.getString("username"),
+                             userData.getString("password"),
                              userData.getString("display_name"),
                              userData.getString("role"),
                              assosList);
@@ -112,4 +116,22 @@ public class User {
         editor.apply();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                isConnected == user.isConnected &&
+                username.equals(user.username) &&
+                display_name.equals(user.display_name) &&
+                role.equals(user.role) &&
+                password.equals(user.password) &&
+                assosJoined.equals(user.assosJoined);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, display_name, role, password, isConnected, assosJoined);
+    }
 }

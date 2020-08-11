@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/colloc_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nom de la colloc / bar" />
+
+        <EditText
+            android:id="@+id/colloc_name_editview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="La Cloc'h"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/colloc_adresse_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Adresse de la colloc / du bar" />
+
+        <EditText
+            android:id="@+id/colloc_adresse_editview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="6 rue Bouet, 29200 Brest"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/bar_ou_colloc_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bar ou colloc ?" />
+
+        <RadioGroup
+            android:id="@+id/bar_ou_colloc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/bar_choice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bar" />
+
+            <RadioButton
+                android:id="@+id/colloc_choice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Colloc" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/colloc_desc_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description" />
+
+        <EditText
+            android:id="@+id/colloc_desc_textedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:allowUndo="true"
+            android:ems="10"
+            android:foregroundGravity="top"
+            android:hint="Pour entrer, sonner en haut à gauche.\nPas de digicode.\n1er étage"
+            android:inputType="textLongMessage|textAutoCorrect|textMultiLine"
+            android:minLines="4"
+            android:selectAllOnFocus="false"
+            android:singleLine="false" />
+
+        <LinearLayout
+            android:id="@+id/btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Annuler" />
+
+            <Button
+                android:id="@+id/commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Valider" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

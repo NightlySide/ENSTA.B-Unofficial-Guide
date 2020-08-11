@@ -15,23 +15,23 @@ import org.json.JSONObject;
 
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
-import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
-import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
+import io.github.nightlyside.enstaunofficialguide.data_structure.User;
 import io.github.nightlyside.enstaunofficialguide.dialogs.EditCollocDialog;
-import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
+import io.github.nightlyside.enstaunofficialguide.dialogs.EditUserDialog;
+import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
-public class ShowCollocsHolder extends RecyclerView.ViewHolder {
+public class ShowUsersHolder extends RecyclerView.ViewHolder {
 
-    private ShowAndEditCollocsFragment parent;
-    private Colloc col;
+    private ShowAndEditUsersFragment parent;
+    private User user;
     private TextView title;
     private TextView text;
     private ImageButton editbtn;
     private ImageButton deletebtn;
 
-    public ShowCollocsHolder(final ShowAndEditCollocsFragment parent, final View itemView) {
+    public ShowUsersHolder(final ShowAndEditUsersFragment parent, final View itemView) {
         super(itemView);
         this.parent = parent;
 
@@ -43,7 +43,7 @@ public class ShowCollocsHolder extends RecyclerView.ViewHolder {
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final EditCollocDialog dialog = new EditCollocDialog(parent, itemView.getContext(), col);
+                final EditUserDialog dialog = new EditUserDialog(parent, itemView.getContext(), user);
                 dialog.show();
             }
         });
@@ -53,25 +53,25 @@ public class ShowCollocsHolder extends RecyclerView.ViewHolder {
             public void onClick(final View view) {
                 AlertDialog.Builder dBuilder = new AlertDialog.Builder(view.getContext());
                 dBuilder.setTitle("Supprimer une colloc / un bar ?")
-                        .setMessage("Voulez vous vraiment supprimer : '" + col.name + "' ?\n\nAttention: Cette action est irreversible !");
+                        .setMessage("Voulez vous vraiment supprimer : '" + user.display_name + "' ?\n\nAttention: Cette action est irreversible !");
                 dBuilder.setPositiveButton("Supprimer", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface, int i) {
                         // Clicked delete
-                        String query = "delete-colloc.php?token="+MainActivity.loggedUser.jwt_token
-                                        +"&id="+col.id;
+                        String query = "delete-user.php?token="+MainActivity.loggedUser.jwt_token
+                                +"&id="+user.id;
                         NetworkManager.getInstance().makeJSONRequest(query, new NetworkResponseListener<String>() {
                             @Override
                             public void getResult(String object) throws JSONException {
                                 JSONObject response = new JSONObject(object);
-                                if (!response.getString("message").equals("Colloc removed successfully."))
+                                if (!response.getString("message").equals("User removed successfully."))
                                 {
                                     Toast.makeText(itemView.getContext(), "Erreur : " + response.getString("message"), Toast.LENGTH_SHORT).show();
-                                    parent.getCollocsInfos();
+                                    parent.getUsersInfos();
                                     dialogInterface.dismiss();
                                 } else {
-                                    Toast.makeText(itemView.getContext(), "Le bar/colloc à été supprimé avec succès !", Toast.LENGTH_SHORT).show();
-                                    parent.getCollocsInfos();
+                                    Toast.makeText(itemView.getContext(), "L'utilisateur à été supprimé avec succès !", Toast.LENGTH_SHORT).show();
+                                    parent.getUsersInfos();
                                     dialogInterface.dismiss();
                                 }
                             }
@@ -91,10 +91,10 @@ public class ShowCollocsHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void bind(Colloc col) {
-        this.col = col;
+    public void bind(User user) {
+        this.user = user;
 
-        title.setText(col.name);
-        text.setText(col.adresse);
+        title.setText(user.display_name);
+        text.setText(user.username);
     }
 }

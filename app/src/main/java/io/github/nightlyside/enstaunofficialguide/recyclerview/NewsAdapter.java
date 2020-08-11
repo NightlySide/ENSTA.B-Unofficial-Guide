@@ -21,7 +21,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsViewHolder> {
 
     @Override
     public NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_news, parent, false);
         return new NewsViewHolder(view);
     }
 

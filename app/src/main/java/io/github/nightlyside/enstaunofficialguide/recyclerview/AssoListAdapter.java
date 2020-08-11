@@ -21,7 +21,7 @@ public class AssoListAdapter extends RecyclerView.Adapter<AssoListViewHolder> {
 
     @Override
     public AssoListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.asso_list_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_asso_list, parent, false);
         return new AssoListViewHolder(view);
     }
 

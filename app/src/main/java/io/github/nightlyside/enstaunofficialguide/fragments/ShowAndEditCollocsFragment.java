@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +13,7 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.recyclerview.widget.SortedList;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.shadow.ShadowDrawableWrapper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +26,7 @@ import java.util.List;
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
+import io.github.nightlyside.enstaunofficialguide.dialogs.EditCollocDialog;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 import io.github.nightlyside.enstaunofficialguide.recyclerview.AssoListAdapter;
@@ -51,7 +51,7 @@ public class ShowAndEditCollocsFragment extends Fragment implements OnQueryTextL
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.colloc_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        collocsAdapter = new ShowCollocsAdapter();
+        collocsAdapter = new ShowCollocsAdapter(this);
         recyclerView.setAdapter(collocsAdapter);
         searchView = view.findViewById(R.id.searchview);
         searchView.setOnQueryTextListener(this);
@@ -62,11 +62,13 @@ public class ShowAndEditCollocsFragment extends Fragment implements OnQueryTextL
             }
         });
 
+        final ShowAndEditCollocsFragment ref = this;
         addLocBtn = view.findViewById(R.id.add_location);
         addLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final EditCollocDialog dialog = new EditCollocDialog(ref, view.getContext());
+                dialog.show();
             }
         });
 
@@ -74,6 +76,9 @@ public class ShowAndEditCollocsFragment extends Fragment implements OnQueryTextL
     }
 
     public void getCollocsInfos() {
+        collocList.clear();
+        collocsAdapter.clear();
+
         String query_url = "collocs.php";
         NetworkManager.getInstance().makeJSONArrayRequest(query_url, new NetworkResponseListener<String>() {
             @Override
@@ -84,7 +89,8 @@ public class ShowAndEditCollocsFragment extends Fragment implements OnQueryTextL
                     Colloc col = new Colloc(obj.getInt("id"),
                             obj.getString("name"),
                             obj.getString("adresse"),
-                            obj.getString("description"));
+                            obj.getString("description"),
+                            obj.getString("colloc_ou_bar"));
                     collocList.add(col);
                 }
                 collocsAdapter.add(collocList);
