@@ -3,7 +3,8 @@ package io.github.nightlyside.enstaunofficialguide.fragments;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;;
+import android.view.ViewGroup;
+import android.view.Window;;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -69,6 +70,8 @@ public class ShowAndEditCollocsFragment extends Fragment implements OnQueryTextL
             public void onClick(View view) {
                 final EditCollocDialog dialog = new EditCollocDialog(ref, view.getContext());
                 dialog.show();
+                Window window = dialog.getWindow();
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
 

@@ -3,6 +3,8 @@ package io.github.nightlyside.enstaunofficialguide.recyclerview;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -45,6 +47,8 @@ public class ShowCollocsHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 final EditCollocDialog dialog = new EditCollocDialog(parent, itemView.getContext(), col);
                 dialog.show();
+                Window window = dialog.getWindow();
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
 
@@ -87,6 +91,8 @@ public class ShowCollocsHolder extends RecyclerView.ViewHolder {
                 });
                 AlertDialog dialog = dBuilder.create();
                 dialog.show();
+                Window window = dialog.getWindow();
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
     }

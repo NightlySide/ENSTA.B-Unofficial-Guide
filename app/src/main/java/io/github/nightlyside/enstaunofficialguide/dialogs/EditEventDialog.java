@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -15,13 +17,19 @@ import android.widget.TimePicker;
 import java.util.Calendar;
 
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.data_structure.AssoEvent;
 import io.github.nightlyside.enstaunofficialguide.data_structure.DateHelper;
 
 public class EditEventDialog extends Dialog {
 
+    private AssoEvent event;
     private EditText edit_event_title, edit_event_description, edit_event_start, edit_event_end;
-    private Spinner spinner_event_start, spinner_event_end;
     private DateHelper start_helper, end_helper;
+
+    public EditEventDialog(Context context, AssoEvent event) {
+        super(context);
+        this.event = event;
+    }
 
     public EditEventDialog(Context context) {
         super(context);
@@ -33,15 +41,24 @@ public class EditEventDialog extends Dialog {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setCanceledOnTouchOutside(false);
-        setContentView(R.layout.dialog_edit_colloc);
+        setContentView(R.layout.dialog_edit_event);
 
-        start_helper = new DateHelper();
-        end_helper = new DateHelper();
 
         edit_event_title = findViewById(R.id.event_title_edittext);
         edit_event_description = findViewById(R.id.event_text_edittext);
         edit_event_start = findViewById(R.id.event_start_date_edittext);
         edit_event_end = findViewById(R.id.event_end_date_edittext);
+
+        if (event != null) {
+            start_helper = event.startDate;
+            end_helper = event.endDate;
+            Log.d("EditEventDebug", event.title);
+            edit_event_title.setText(event.title);
+            edit_event_description.setText(event.description);
+        } else {
+            start_helper = new DateHelper();
+            end_helper = new DateHelper();
+        }
 
         edit_event_start.setText(DateHelper.dateHelperToString(start_helper));
         edit_event_start.setOnClickListener(new View.OnClickListener() {
@@ -61,11 +78,6 @@ public class EditEventDialog extends Dialog {
     }
 
     private void date_picker(final EditText date_edittext, final DateHelper helper) {
-         Calendar c = Calendar.getInstance();
-         int mYear = c.get(Calendar.YEAR);
-         int mMonth = c.get(Calendar.MONTH);
-         int mDay = c.get(Calendar.DAY_OF_MONTH);
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -80,10 +92,6 @@ public class EditEventDialog extends Dialog {
     }
 
     private void time_picker(final EditText date_edittext, final DateHelper helper) {
-        Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
-
         TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override

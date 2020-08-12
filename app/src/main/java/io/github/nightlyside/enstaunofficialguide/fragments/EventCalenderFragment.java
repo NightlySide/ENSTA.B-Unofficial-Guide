@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -25,6 +27,7 @@ import java.util.List;
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.AssoEvent;
 import io.github.nightlyside.enstaunofficialguide.data_structure.DateHelper;
+import io.github.nightlyside.enstaunofficialguide.dialogs.EditEventDialog;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
@@ -136,7 +139,20 @@ public class EventCalenderFragment extends Fragment implements MonthLoader.Month
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-
+        AssoEvent assoEvent = null;
+        for (AssoEvent ae : eventList) {
+            if (ae.id == Integer.parseInt(event.getIdentifier())) {
+                assoEvent = ae;
+            }
+        }
+        if (assoEvent != null) {
+            EditEventDialog dialog = new EditEventDialog(getContext(), assoEvent);
+            dialog.show();
+            Window window = dialog.getWindow();
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        } else {
+            Toast.makeText(getContext(), "Erreur : évènement non trouvé.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
