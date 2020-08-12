@@ -28,6 +28,7 @@ import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.AssoEvent;
 import io.github.nightlyside.enstaunofficialguide.data_structure.DateHelper;
 import io.github.nightlyside.enstaunofficialguide.dialogs.EditEventDialog;
+import io.github.nightlyside.enstaunofficialguide.dialogs.ShowEventDialog;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
@@ -102,8 +103,8 @@ public class EventCalenderFragment extends Fragment implements MonthLoader.Month
                         event.title,
                         event.startDate.getCalendar(),
                         event.endDate.getCalendar());
-                //wve.setLocation("Quelque part");
-                //wve.setColor();
+                wve.setLocation(event.location);
+                wve.setColor(event.asso.color);
 
                 weekEvents.add(wve);
             }
@@ -146,7 +147,7 @@ public class EventCalenderFragment extends Fragment implements MonthLoader.Month
             }
         }
         if (assoEvent != null) {
-            EditEventDialog dialog = new EditEventDialog(getContext(), assoEvent);
+            ShowEventDialog dialog = new ShowEventDialog(getContext(), assoEvent);
             dialog.show();
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

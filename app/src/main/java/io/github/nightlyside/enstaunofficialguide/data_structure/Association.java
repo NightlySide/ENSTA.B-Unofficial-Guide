@@ -1,5 +1,7 @@
 package io.github.nightlyside.enstaunofficialguide.data_structure;
 
+import android.graphics.Color;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,14 +19,16 @@ public class Association {
     public String name;
     public boolean isOpenToRegister;
     public String description;
+    public int color;
 
     static public List<Association> cache_associations = new ArrayList<>();
 
-    public Association(int id, String name, boolean isOpen, String description) {
+    public Association(int id, String name, boolean isOpen, String description, int color) {
         this.id = id;
         this.name = name;
         this.isOpenToRegister = isOpen;
         this.description = description;
+        this.color = color;
     }
 
     static public Association getAssociationById(int id) {
@@ -45,10 +49,13 @@ public class Association {
                 JSONArray response = new JSONArray(object);
                 for (int i=0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
+                    int col = Color.parseColor("#" + obj.getString("color"));
+
                     Association a = new Association(obj.getInt("id"),
                             obj.getString("name"),
                             obj.getString("is_open_to_register").equals("1"),
-                            obj.getString("description"));
+                            obj.getString("description"),
+                            col);
                     Association.cache_associations.add(a);
                 }
             }

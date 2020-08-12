@@ -1,5 +1,6 @@
 package io.github.nightlyside.enstaunofficialguide.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,10 +82,13 @@ public class AssoListFragment extends Fragment {
                 JSONArray response = new JSONArray(result);
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject obj = response.getJSONObject(i);
+                    int col = Color.parseColor("#" + obj.getString("color"));
+
                     Association a = new Association(obj.getInt("id"),
                             obj.getString("name"),
                             obj.getString("is_open_to_register").equals("1"),
-                            obj.getString("description"));
+                            obj.getString("description"),
+                            col);
                     assoList.add(a);
                 }
                 assoListAdapter.add(assoList);
