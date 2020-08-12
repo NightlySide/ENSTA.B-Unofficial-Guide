@@ -18,9 +18,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.navigation.NavigationView;
 
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
 import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
 import io.github.nightlyside.enstaunofficialguide.dialogs.FirstRunDialogFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.EventCalenderFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NetworkManager.getInstance(this);
 
         loggedUser = User.getUserFromSharedPreferences(this);
+        Association.updateAssociationLocalDB();
 
         if (loggedUser != null && loggedUser.isConnected)
             Log.d("MainDebug", "Found logged user : " + loggedUser.display_name + "(" + loggedUser.username + ")");
@@ -110,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.activity_main_frame_layout, new AssoListFragment());
                 ft.commit();
                 break;
+            case R.id.activity_main_drawer_assos_schedule :
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new EventCalenderFragment());
+                ft.commit();
+                break;
             case R.id.activity_main_drawer_map:
                 Intent mapintent = new Intent(this, MapsActivity.class);
                 startActivity(mapintent);
@@ -168,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 3 - Configure NavigationView
-    private void configureNavigationView(){
+    public void configureNavigationView(){
         this.navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu navmenu = navigationView.getMenu();
@@ -178,10 +186,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navmenu.findItem(R.id.activity_main_drawer_register).setVisible(false);
         }
 
-        if (loggedUser == null || !loggedUser.isConnected || !RoleLevel.getLevelFromRole(loggedUser.role).isAllowed(RoleLevel.Level.ADMIN)) {
-            navmenu.findItem(R.id.activity_main_drawer_admin_collocs).setVisible(false);
-            navmenu.findItem(R.id.activity_main_drawer_admin_users).setVisible(false);
-        }
+        Boolean show_admin = loggedUser != null && loggedUser.isConnected && RoleLevel.getLevelFromRole(loggedUser.role).isAllowed(RoleLevel.Level.EDITOR);
+        navmenu.findItem(R.id.activity_main_drawer_admin_collocs).setVisible(show_admin);
+        navmenu.findItem(R.id.activity_main_drawer_admin_users).setVisible(show_admin);
     }
 
     @Override
@@ -198,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
-        super.onResume();
         invalidateOptionsMenu();
+        super.onResume();
     }
 }

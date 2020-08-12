@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.Utils;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
@@ -21,6 +22,7 @@ import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListene
 
 public class AssoListViewHolder extends RecyclerView.ViewHolder {
 
+    private AssoListFragment parent;
     private int asso_id;
     private TextView name;
     private TextView description;
@@ -28,8 +30,9 @@ public class AssoListViewHolder extends RecyclerView.ViewHolder {
     public boolean hasJoined = false;
 
     // itemview = 1 card
-    public AssoListViewHolder(View itemView) {
+    public AssoListViewHolder(final AssoListFragment parent, final View itemView) {
         super(itemView);
+        this.parent = parent;
 
         name = (TextView) itemView.findViewById(R.id.assolist_card_title);
         description = (TextView) itemView.findViewById(R.id.assolist_card_text);

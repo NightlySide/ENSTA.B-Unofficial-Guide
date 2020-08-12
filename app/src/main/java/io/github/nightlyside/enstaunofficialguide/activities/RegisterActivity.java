@@ -103,10 +103,10 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String pass = display_nametext.getText().toString();
-                isFullnameValid = checkValidDisplayName(pass);
+                final String display_name = display_nametext.getText().toString();
+                isFullnameValid = checkValidDisplayName(display_name);
                 if (!isFullnameValid) {
-                    display_nametext.setError("Veuillez indiquer un vrai nom.");
+                    display_nametext.setError("Veuillez indiquer un vrai nom.\nex: Pierre Dupont");
                 }
             }
         });
@@ -139,7 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // validating displayname
     private boolean checkValidDisplayName(String display_name) {
-        String EMAIL_PATTERN = "[a-zA-Z.]* [a-zA-Z.]*";
+        String EMAIL_PATTERN = "^[a-zàâçéèêëîïôûùüÿñæœA-ZÀÂÇÉÈÊËÎÏÔÛÙÜŸÑÆŒ.-]* [a-zàâçéèêëîïôûùüÿñæœA-ZÀÂÇÉÈÊËÎÏÔÛÙÜŸÑÆŒ. -]*$";
 
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(display_name);

@@ -51,7 +51,7 @@ public class User {
     }
 
     static public void updateUserFromCurrentJWTToken(final Context context, final String jwt_token, final NetworkResponseListener<Boolean> listener) {
-        String query_string = "update-user.php?token="+jwt_token;
+        String query_string = "update-jwt.php?token="+jwt_token;
         NetworkManager.getInstance().makeJSONRequest(query_string, new NetworkResponseListener<String>() {
             @Override
             public void getResult(String result) throws JSONException {
@@ -122,7 +122,6 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
-                isConnected == user.isConnected &&
                 username.equals(user.username) &&
                 display_name.equals(user.display_name) &&
                 role.equals(user.role) &&
@@ -132,6 +131,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, display_name, role, password, isConnected, assosJoined);
+        return Objects.hash(id, username, display_name, role, password, assosJoined);
     }
 }

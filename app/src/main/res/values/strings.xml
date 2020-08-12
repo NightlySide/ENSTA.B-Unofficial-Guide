@@ -20,4 +20,12 @@
     <string name="invalid_username">Username non valide</string>
     <string name="invalid_password">Le mot de passe doit faire >5 lettres</string>
     <string name="login_failed">"Connection échouée"</string>
+
+    <!--Role list-->
+    <string-array name="roles">
+        <item>Admin</item>
+        <item>Moderateur</item>
+        <item>Editeur</item>
+        <item>Membre</item>
+    </string-array>
 </resources>

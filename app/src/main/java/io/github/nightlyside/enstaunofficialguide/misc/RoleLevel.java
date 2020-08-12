@@ -4,6 +4,7 @@ public class RoleLevel {
 
     static public enum Level {
         ADMIN(1000),
+        MODERATOR(500),
         EDITOR(100),
         MEMBER(1);
 
@@ -28,6 +29,8 @@ public class RoleLevel {
         switch (role) {
             case "admin":
                 return Level.ADMIN;
+            case "moderateur":
+                return Level.MODERATOR;
             case "editeur":
                 return Level.EDITOR;
             default:

@@ -11,57 +11,73 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/user_name_textview"
+            android:id="@+id/event_title_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nom d'utilisateur (email ENSTA)" />
+            android:text="Titre de l'évènement" />
 
         <EditText
-            android:id="@+id/user_name_editview"
+            android:id="@+id/event_title_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="john.doe@ensta-bretagne.org"
-            android:inputType="textPersonName" />
+            android:hint="Cours de cyberdéfense"
+            android:inputType="textMultiLine"
+            android:textSize="24sp" />
+
+        <!-- Buttons -->
 
         <TextView
-            android:id="@+id/user_display_name_textview"
+            android:id="@+id/event_asso_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nom complet" />
-
-        <EditText
-            android:id="@+id/user_display_name_editview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="John Doe"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:id="@+id/user_password_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mot de passe" />
-
-        <EditText
-            android:id="@+id/user_password_editview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Mot de passe inchangé"
-            android:inputType="textPersonName|textPassword" />
-
-        <TextView
-            android:id="@+id/user_admin_role_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rôle sur l'application" />
+            android:text="Association qui organise" />
 
         <Spinner
-            android:id="@+id/user_admin_role_spinner"
+            android:id="@+id/event_asso_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="48dp" />
+
+        <TextView
+            android:id="@+id/event_start_date_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date et heure de début" />
+
+        <EditText
+            android:id="@+id/event_start_date_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date" />
+
+        <TextView
+            android:id="@+id/event_end_date_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date et heure de fin" />
+
+        <EditText
+            android:id="@+id/event_end_date_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date" />
+
+        <TextView
+            android:id="@+id/event_text_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description de l'évènement (qui, où, ...)" />
+
+        <EditText
+            android:id="@+id/event_text_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Cours de Cyberdéfense à 18h en F103.\nPensez à prendre vos PC portables."
+            android:inputType="textPersonName"
+            android:singleLine="false" />
 
         <LinearLayout
             android:id="@+id/btn_layout"
