@@ -6,8 +6,10 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
@@ -48,6 +50,10 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:label="@string/title_activity_register"
+            android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.AssoGestionActivity"
+            android:label="Gérer son association"
             android:parentActivityName=".activities.MainActivity"></activity>
     </application>
 

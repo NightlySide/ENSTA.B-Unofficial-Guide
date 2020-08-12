@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,9 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
@@ -35,6 +38,12 @@ public class AssoListFragment extends Fragment {
     private AssoListAdapter assoListAdapter;
     private List<Association> assoList = new ArrayList<>();
 
+    private boolean isEditing;
+
+    public AssoListFragment(boolean isEditing) {
+        this.isEditing = isEditing;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
@@ -46,7 +55,7 @@ public class AssoListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         recyclerView = view.findViewById(R.id.assolist_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        assoListAdapter = new AssoListAdapter(this);
+        assoListAdapter = new AssoListAdapter(this, isEditing);
         recyclerView.setAdapter(assoListAdapter);
         searchView = view.findViewById(R.id.asso_searchview);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -71,10 +80,13 @@ public class AssoListFragment extends Fragment {
             }
         });
 
-        getAssosList();
+        if (!isEditing)
+            getFullAssosList();
+        else
+            getPrezAssosList();
     }
 
-    private void getAssosList() {
+    private void getFullAssosList() {
         String query_url = "asso-list.php";
         NetworkManager.getInstance().makeJSONArrayRequest(query_url, new NetworkResponseListener<String>() {
             @Override
@@ -84,14 +96,56 @@ public class AssoListFragment extends Fragment {
                     JSONObject obj = response.getJSONObject(i);
                     int col = Color.parseColor("#" + obj.getString("color"));
 
+                    // Creating the prez list
+                    HashSet<Integer> prezList = new HashSet<>();
+                    String[] id_list = obj.getString("presidents").split(",");
+                    for (String s : id_list) {
+                        prezList.add(Integer.valueOf(s.trim()));
+                    }
+
                     Association a = new Association(obj.getInt("id"),
                             obj.getString("name"),
                             obj.getString("is_open_to_register").equals("1"),
                             obj.getString("description"),
-                            col);
+                            col, prezList);
                     assoList.add(a);
                 }
                 assoListAdapter.add(assoList);
+            }
+        });
+    }
+
+    private void getPrezAssosList() {
+        String query_url = "get-asso-list-as-presidenta.php?token=" + MainActivity.loggedUser.jwt_token;
+        NetworkManager.getInstance().makeJSONRequest(query_url, new NetworkResponseListener<String>() {
+            @Override
+            public void getResult(String result) throws JSONException {
+                JSONObject response = new JSONObject(result);
+                JSONArray res_array = response.getJSONArray("data");
+                if (response.getString("message").equals("List pulled successfully")) {
+                    for (int i = 0; i < res_array.length(); i++) {
+                        JSONObject obj = res_array.getJSONObject(i);
+                        int col = Color.parseColor("#" + obj.getString("color"));
+
+                        // Creating the prez list
+                        HashSet<Integer> prezList = new HashSet<>();
+                        String[] id_list = obj.getString("presidents").split(",");
+                        for (String s : id_list) {
+                            prezList.add(Integer.valueOf(s.trim()));
+                        }
+
+                        Association a = new Association(obj.getInt("id"),
+                                obj.getString("name"),
+                                obj.getString("is_open_to_register").equals("1"),
+                                obj.getString("description"),
+                                col, prezList);
+                        assoList.add(a);
+                    }
+                    assoListAdapter.add(assoList);
+                }
+                else {
+                    Toast.makeText(getContext(), "Erreur : impossible de récupérer la liste de tes associations.\nEs-tu bien un président ?", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

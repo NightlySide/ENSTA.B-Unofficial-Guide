@@ -52,6 +52,12 @@
                     android:icon="@drawable/ic_colloc_bar_map"
                     android:title="Gérer les collocs" />
             </group>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_prez_asso"
+                    android:icon="@drawable/ic_account"
+                    android:title="Gérer son association"/>
+            </group>
         </menu>
     </item>
 

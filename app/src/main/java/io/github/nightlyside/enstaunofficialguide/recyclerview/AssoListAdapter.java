@@ -64,15 +64,17 @@ public class AssoListAdapter extends RecyclerView.Adapter<AssoListViewHolder> {
     final SortedList<Association> assoList = new SortedList<>(Association.class, mCallback);
 
     private AssoListFragment parent;
+    private boolean isEditing;
 
-    public AssoListAdapter(AssoListFragment parent) {
+    public AssoListAdapter(AssoListFragment parent, boolean isEditing) {
         this.parent = parent;
+        this.isEditing = isEditing;
     }
 
     @Override
     public AssoListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_asso_list, parent, false);
-        return new AssoListViewHolder(this.parent, view);
+        return new AssoListViewHolder(this.parent, isEditing, view);
     }
 
     @Override

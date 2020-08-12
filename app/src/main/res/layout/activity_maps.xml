@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,7 +9,10 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,32 +24,63 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <fragment
-        xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         tools:context=".activities.MapsActivity" />
 
-    <FrameLayout
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/goto_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="48dp"
+        app:srcCompat="@android:drawable/ic_menu_directions"
+        app:useCompatPadding="false" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:tint="#FFFFFF"
-            app:fabSize="auto"
-            app:maxImageSize="48dp"
-            app:srcCompat="@android:drawable/ic_menu_directions"
-            app:useCompatPadding="true" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/mylocation_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_no_location"
+        app:fabSize="mini"
+        app:layout_anchorGravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/goto_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:useCompatPadding="false" />
 
-    </FrameLayout>.
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/nearest_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_unkown_location"
+        app:fabSize="mini"
+        app:layout_anchorGravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/mylocation_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:useCompatPadding="false" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
@@ -29,6 +31,7 @@ import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFr
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
+import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NetworkManager.getInstance(this);
 
         loggedUser = User.getUserFromSharedPreferences(this);
-        Association.updateAssociationLocalDB();
+        Association.updateAssociationLocalDB(object -> { invalidateOptionsMenu(); });
 
         if (loggedUser != null && loggedUser.isConnected)
             Log.d("MainDebug", "Found logged user : " + loggedUser.display_name + "(" + loggedUser.username + ")");
@@ -68,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureToolBar();
 
         this.configureDrawerLayout();
-        invalidateOptionsMenu();
 
         this.configureNavigationView();
 
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.activity_main_drawer_assos_list :
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.activity_main_frame_layout, new AssoListFragment());
+                ft.replace(R.id.activity_main_frame_layout, new AssoListFragment(false));
                 ft.commit();
                 break;
             case R.id.activity_main_drawer_assos_schedule :
@@ -145,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.activity_main_drawer_admin_collocs:
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.activity_main_frame_layout, new ShowAndEditCollocsFragment());
+                ft.commit();
+                break;
+            case R.id.activity_main_drawer_prez_asso :
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new AssoListFragment(true));
                 ft.commit();
                 break;
             default:
@@ -189,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Boolean show_admin = loggedUser != null && loggedUser.isConnected && RoleLevel.getLevelFromRole(loggedUser.role).isAllowed(RoleLevel.Level.EDITOR);
         navmenu.findItem(R.id.activity_main_drawer_admin_collocs).setVisible(show_admin);
         navmenu.findItem(R.id.activity_main_drawer_admin_users).setVisible(show_admin);
+        navmenu.findItem(R.id.activity_main_drawer_prez_asso).setVisible(loggedUser != null && loggedUser.isConnected && Association.isUserPresident(loggedUser));
     }
 
     @Override

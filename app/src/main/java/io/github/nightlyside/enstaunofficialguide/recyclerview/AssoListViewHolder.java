@@ -1,5 +1,8 @@
 package io.github.nightlyside.enstaunofficialguide.recyclerview;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.activities.AssoGestionActivity;
+import io.github.nightlyside.enstaunofficialguide.activities.RegisterActivity;
 import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.Utils;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
@@ -23,16 +28,18 @@ import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListene
 public class AssoListViewHolder extends RecyclerView.ViewHolder {
 
     private AssoListFragment parent;
-    private int asso_id;
+    private Association asso;
     private TextView name;
     private TextView description;
     private Button joinBtn;
     public boolean hasJoined = false;
+    private boolean isEditing;
 
     // itemview = 1 card
-    public AssoListViewHolder(final AssoListFragment parent, final View itemView) {
+    public AssoListViewHolder(final AssoListFragment parent, boolean isEditing, final View itemView) {
         super(itemView);
         this.parent = parent;
+        this.isEditing = isEditing;
 
         name = (TextView) itemView.findViewById(R.id.assolist_card_title);
         description = (TextView) itemView.findViewById(R.id.assolist_card_text);
@@ -40,8 +47,15 @@ public class AssoListViewHolder extends RecyclerView.ViewHolder {
         joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hasJoined = !hasJoined;
-                update_btn(false);
+                AlertDialog.Builder dBuilder = new AlertDialog.Builder(view.getContext());
+                dBuilder.setTitle("Rejoindre / Quitter une association")
+                        .setMessage("Voulez vraiment rejoindre/quitter l'association "+ asso.name +" ?\n\nSi vous étiez président, vous le resterez en la rejoignant de nouveau.")
+                        .setPositiveButton("Accepter", (dialogInterface, i) -> {
+                            hasJoined =!hasJoined;
+                            update_btn(false);
+                        })
+                        .setNegativeButton("Annuler", (dialogInterface, i) -> dialogInterface.dismiss());
+                dBuilder.create().show();
             }
         });
     }
@@ -52,33 +66,44 @@ public class AssoListViewHolder extends RecyclerView.ViewHolder {
             joinBtn.setBackgroundColor(Color.parseColor("#03A9F4"));
             joinBtn.setTextColor(Color.parseColor("#FFFFFF"));
 
-            if (MainActivity.loggedUser.assosJoined.contains(asso_id))
-                MainActivity.loggedUser.assosJoined.remove(asso_id);
+            if (MainActivity.loggedUser.assosJoined.contains(asso.id))
+                MainActivity.loggedUser.assosJoined.remove(asso.id);
         } else {
             joinBtn.setText("Rejoint");
             joinBtn.setBackgroundColor(Color.parseColor("#FFCCCCCC"));
             joinBtn.setTextColor(Color.parseColor("#ededed"));
 
-            MainActivity.loggedUser.assosJoined.add(asso_id);
+            MainActivity.loggedUser.assosJoined.add(asso.id);
         }
         if (!onSetup)
             updateJoinedAssos();
     }
 
     public void bind(Association asso) {
-        asso_id = asso.id;
+        this.asso = asso;
         name.setText(asso.name);
         description.setText(asso.description);
 
-        if (MainActivity.loggedUser == null || !MainActivity.loggedUser.isConnected)
+        if (MainActivity.loggedUser == null || !MainActivity.loggedUser.isConnected || isEditing)
         {
             joinBtn.setEnabled(false);
             joinBtn.setVisibility(View.GONE);
+
+            if (isEditing) {
+                itemView.setOnClickListener(view -> {
+                    Intent assoGestionActivity = new Intent(itemView.getContext(), AssoGestionActivity.class);
+                    itemView.getContext().startActivity(assoGestionActivity);
+                });
+            }
         } else {
             hasJoined = MainActivity.loggedUser.assosJoined.contains(asso.id);
             update_btn(true);
+
+            if (!asso.isOpenToRegister) {
+                joinBtn.setEnabled(false);
+                joinBtn.setOnClickListener(view -> Toast.makeText(itemView.getContext(), "L'association a décidé de ne pas ouvrir ses inscriptions.", Toast.LENGTH_SHORT).show());
+            }
         }
-        //Picasso.with(imageView.getContext()).load(myObject.getImageUrl()).centerCrop().fit().into(imageView);
     }
 
     private void updateJoinedAssos() {
