@@ -27,6 +27,7 @@ import io.github.nightlyside.enstaunofficialguide.dialogs.FirstRunDialogFragment
 import io.github.nightlyside.enstaunofficialguide.fragments.EventCalenderFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.SettingsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
@@ -152,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.activity_main_drawer_prez_asso :
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.activity_main_frame_layout, new AssoListFragment(true));
+                ft.commit();
+                break;
+            case R.id.activity_main_drawer_settings:
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.activity_main_frame_layout, new SettingsFragment());
                 ft.commit();
                 break;
             default:
