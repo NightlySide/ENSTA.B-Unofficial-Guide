@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.alamkanak.weekview.MonthLoader;
@@ -32,12 +33,23 @@ import io.github.nightlyside.enstaunofficialguide.dialogs.ShowEventDialog;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
-public class EventCalenderFragment extends Fragment implements MonthLoader.MonthChangeListener, WeekView.EventClickListener, WeekView.EventLongPressListener {
+public class EventCalendarFragment extends Fragment implements MonthLoader.MonthChangeListener, WeekView.EventClickListener, WeekView.EventLongPressListener {
 
     private FloatingActionButton currentDayFab;
     private WeekView calendarView;
+    private int initFocusOnEventId = -1;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public List<AssoEvent> eventList = new ArrayList<>();
+
+    public EventCalendarFragment() {}
+
+    public EventCalendarFragment(int eventId) { this.initFocusOnEventId = eventId; }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -72,6 +84,8 @@ public class EventCalenderFragment extends Fragment implements MonthLoader.Month
 
         String query = "asso-events.php";
         NetworkManager.getInstance().makeJSONArrayRequest(query, new NetworkResponseListener<String>() {
+            AssoEvent initFocusEvent;
+
             @Override
             public void getResult(String object) throws JSONException {
                 JSONArray response = new JSONArray(object);
@@ -86,10 +100,21 @@ public class EventCalenderFragment extends Fragment implements MonthLoader.Month
                             obj.getString("location"),
                             obj.getString("description"));
                     eventList.add(ae);
+
+                    if (initFocusOnEventId != -1 && obj.getInt("id") == initFocusOnEventId)
+                        initFocusEvent = ae;
                 }
                 calendarView.notifyDatasetChanged();
+
+                if (initFocusOnEventId != -1 && initFocusEvent != null)
+                    initFocusOnEvent(initFocusEvent);
             }
         });
+    }
+
+    private void initFocusOnEvent(AssoEvent event) {
+        calendarView.goToDate(event.startDate.getCalendar());
+        calendarView.goToHour(event.startDate.getHour());
     }
 
     public List<WeekViewEvent> getMonthEvents(int year, int month) {

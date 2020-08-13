@@ -17,14 +17,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 
-import org.json.JSONException;
-
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
 import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
 import io.github.nightlyside.enstaunofficialguide.dialogs.FirstRunDialogFragment;
-import io.github.nightlyside.enstaunofficialguide.fragments.EventCalenderFragment;
+import io.github.nightlyside.enstaunofficialguide.fragments.EventCalendarFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.NewsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ProfileFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.SettingsFragment;
@@ -32,7 +30,6 @@ import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFr
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
-import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -85,6 +82,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FirstRunDialogFragment dialogFragment = new FirstRunDialogFragment();
             dialogFragment.show(getSupportFragmentManager().beginTransaction(), "First run message");
         }
+
+        String menuFragment = getIntent().getStringExtra("menuFragment");
+        if (menuFragment != null) {
+            switch (menuFragment) {
+                case "calendar":
+                    int eventId = getIntent().getIntExtra("eventId", -1);
+                    ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.activity_main_frame_layout, new EventCalendarFragment(eventId));
+                    ft.commit();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Override
@@ -118,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.activity_main_drawer_assos_schedule :
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.activity_main_frame_layout, new EventCalenderFragment());
+                ft.replace(R.id.activity_main_frame_layout, new EventCalendarFragment());
                 ft.commit();
                 break;
             case R.id.activity_main_drawer_map:

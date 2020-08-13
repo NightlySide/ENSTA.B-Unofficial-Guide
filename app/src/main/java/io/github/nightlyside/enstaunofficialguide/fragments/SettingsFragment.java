@@ -35,6 +35,8 @@ public class SettingsFragment extends Fragment {
         testNotif = view.findViewById(R.id.test_notification_btn);
         testNotif.setOnClickListener(btnview -> {
             Intent intent = new Intent(getContext(), MainActivity.class);
+            intent.putExtra("menuFragment", "calendar");
+            intent.putExtra("eventId", 4);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 1,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
