@@ -38,6 +38,7 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
     private FloatingActionButton currentDayFab;
     private WeekView calendarView;
     private int initFocusOnEventId = -1;
+    private AssoEvent initFocusEvent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +49,10 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
 
     public EventCalendarFragment() {}
 
-    public EventCalendarFragment(int eventId) { this.initFocusOnEventId = eventId; }
+    public EventCalendarFragment(int eventId) {
+        Log.d("NotificationDebug", "Clicked eventId : " + eventId);
+        this.initFocusOnEventId = eventId;
+    }
 
 
     @Override
@@ -68,12 +72,9 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
         calendarView.goToHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
 
         currentDayFab = view.findViewById(R.id.current_dat_fab);
-        currentDayFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calendarView.goToToday();
-                calendarView.goToHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-            }
+        currentDayFab.setOnClickListener(view1 -> {
+            calendarView.goToToday();
+            calendarView.goToHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
         });
 
         getEvents();
@@ -84,8 +85,6 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
 
         String query = "asso-events.php";
         NetworkManager.getInstance().makeJSONArrayRequest(query, new NetworkResponseListener<String>() {
-            AssoEvent initFocusEvent;
-
             @Override
             public void getResult(String object) throws JSONException {
                 JSONArray response = new JSONArray(object);
@@ -106,15 +105,16 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
                 }
                 calendarView.notifyDatasetChanged();
 
-                if (initFocusOnEventId != -1 && initFocusEvent != null)
-                    initFocusOnEvent(initFocusEvent);
+                initFocusOnEventFunction();
             }
         });
     }
 
-    private void initFocusOnEvent(AssoEvent event) {
-        calendarView.goToDate(event.startDate.getCalendar());
-        calendarView.goToHour(event.startDate.getHour());
+    private void initFocusOnEventFunction() {
+        if (initFocusEvent != null) {
+            calendarView.goToDate((Calendar) initFocusEvent.startDate.getCalendar().clone());
+            //calendarView.goToHour(event.startDate.getHour());
+        }
     }
 
     public List<WeekViewEvent> getMonthEvents(int year, int month) {

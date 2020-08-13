@@ -231,6 +231,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(this, "La colloc la plus proche de vous est : '" + closestMarker.getTitle() + "'.", Toast.LENGTH_SHORT).show();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(closestMarker.getPosition(), 17f));
                 closestMarker.showInfoWindow();
+                selectCollocMarker(closestMarker);
             }
         });
     }
@@ -348,6 +349,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (marker.equals(this.marker))
             return false;
 
+        selectCollocMarker(marker);
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur (which is for the camera to move such that the
+        // marker is centered and for the marker's info window to open, if it has one).
+        return false;
+    }
+
+    private void selectCollocMarker(Marker marker) {
         selected_colloc = null;
         for (int i = 0; i < collocs.size(); i++) {
             if (collocs.get(i).name.equals(marker.getTitle())) {
@@ -362,10 +372,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             iti_btn.setEnabled(false);
         }
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur (which is for the camera to move such that the
-        // marker is centered and for the marker's info window to open, if it has one).
-        return false;
     }
 }

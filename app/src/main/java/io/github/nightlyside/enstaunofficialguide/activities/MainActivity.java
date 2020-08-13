@@ -14,9 +14,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
+import io.github.nightlyside.enstaunofficialguide.BackgroundServiceWorker;
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.User;
@@ -33,13 +47,9 @@ import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    //FOR DESIGN
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-
-    private String jwt_token;
-    private String username;
 
     static public User loggedUser;
 
@@ -88,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (menuFragment) {
                 case "calendar":
                     int eventId = getIntent().getIntExtra("eventId", -1);
+                    Log.d("NotificationDebug", "Received id : " + eventId);
                     ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.activity_main_frame_layout, new EventCalendarFragment(eventId));
                     ft.commit();
@@ -95,6 +106,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 default:
                     break;
             }
+        }
+
+        // Background activity
+        int REMINDER_HOUR = 7;
+        int REMINDER_MINUTE = 30;
+        long delay;
+        Calendar cal = Calendar.getInstance();
+        Calendar reminder_calendar = Calendar.getInstance();
+        reminder_calendar.set(Calendar.MINUTE, REMINDER_MINUTE);
+        reminder_calendar.set(Calendar.HOUR_OF_DAY, REMINDER_HOUR);
+
+        if (cal.after(reminder_calendar)) {
+            reminder_calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        delay = (reminder_calendar.getTime().getTime() - cal.getTime().getTime()) / 1000 / 60;
+        Log.d("TimeDebug", "Delay of " + delay + " minutes.");
+
+        if (loggedUser != null && loggedUser.isConnected) {
+            Log.d("BackgroundServiceDebug", "Ready to send notification");
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build();
+            PeriodicWorkRequest eventNotificationRefresh = new PeriodicWorkRequest.Builder(BackgroundServiceWorker.class, 12, TimeUnit.HOURS, 15, TimeUnit.MINUTES)
+                    .setConstraints(constraints)
+                    .setInitialDelay(delay, TimeUnit.MINUTES)
+                    .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                    .addTag("daily-events-notification")
+                    //.setInputData(new Data.Builder().putString("token", loggedUser.jwt_token).build())
+                    .build();
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork("daily-events-notification", ExistingPeriodicWorkPolicy.KEEP, eventNotificationRefresh);
+
+            /*WorkRequest eventNotificationRefresh = new OneTimeWorkRequest.Builder(BackgroundServiceWorker.class)
+                    .setConstraints(constraints)
+                    //.setInitialDelay(delay, TimeUnit.MINUTES)
+                    .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                    .addTag("daily-events-notification")
+                    //.setInputData(new Data.Builder().putString("token", loggedUser.jwt_token).build())
+                    .build();
+            WorkManager.getInstance(this).enqueue(eventNotificationRefresh);*/
         }
     }
 
@@ -107,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
