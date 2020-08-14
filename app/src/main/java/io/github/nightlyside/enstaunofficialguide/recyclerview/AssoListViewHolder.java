@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import org.json.JSONObject;
 import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.activities.AssoGestionActivity;
 import io.github.nightlyside.enstaunofficialguide.activities.RegisterActivity;
+import io.github.nightlyside.enstaunofficialguide.dialogs.ShowAssoDialog;
 import io.github.nightlyside.enstaunofficialguide.fragments.AssoListFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.Utils;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
@@ -84,17 +87,22 @@ public class AssoListViewHolder extends RecyclerView.ViewHolder {
         name.setText(asso.name);
         description.setText(asso.description);
 
+        itemView.setOnClickListener(view -> {
+            if (isEditing) {
+                Intent assoGestionActivity = new Intent(itemView.getContext(), AssoGestionActivity.class);
+                itemView.getContext().startActivity(assoGestionActivity);
+            } else {
+                ShowAssoDialog dialog = new ShowAssoDialog(itemView.getContext(), asso);
+                dialog.show();
+                Window window = dialog.getWindow();
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+        });
+
         if (MainActivity.loggedUser == null || !MainActivity.loggedUser.isConnected || isEditing)
         {
             joinBtn.setEnabled(false);
             joinBtn.setVisibility(View.GONE);
-
-            if (isEditing) {
-                itemView.setOnClickListener(view -> {
-                    Intent assoGestionActivity = new Intent(itemView.getContext(), AssoGestionActivity.class);
-                    itemView.getContext().startActivity(assoGestionActivity);
-                });
-            }
         } else {
             hasJoined = MainActivity.loggedUser.assosJoined.contains(asso.id);
             update_btn(true);

@@ -1,5 +1,6 @@
 package io.github.nightlyside.enstaunofficialguide.network;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -16,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class NetworkManager {
 
     private static final String TAG = "NetworkManager";
@@ -25,11 +28,14 @@ public class NetworkManager {
 
     //for Volley API
     public RequestQueue requestQueue;
+    public AtomicInteger requestsCounter = new AtomicInteger(0);
 
-    private NetworkManager(Context context)
+    public NetworkManager(Context context)
     {
         requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        //other stuf if you need
+        requestQueue.addRequestFinishedListener(request -> {
+            requestsCounter.decrementAndGet();
+        });
     }
 
     public static synchronized NetworkManager getInstance(Context context)
@@ -89,6 +95,7 @@ public class NetworkManager {
                 });
 
         request.setRetryPolicy(new DefaultRetryPolicy(3000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestsCounter.incrementAndGet();
         requestQueue.add(request);
     }
 
@@ -131,6 +138,7 @@ public class NetworkManager {
                 });
 
         request.setRetryPolicy(new DefaultRetryPolicy(3000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestsCounter.incrementAndGet();
         requestQueue.add(request);
     }
 }

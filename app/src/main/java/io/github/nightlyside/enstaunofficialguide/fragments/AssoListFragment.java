@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Cache;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 
@@ -27,6 +28,7 @@ import io.github.nightlyside.enstaunofficialguide.R;
 import io.github.nightlyside.enstaunofficialguide.activities.MainActivity;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Association;
 import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
+import io.github.nightlyside.enstaunofficialguide.network.CacheManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 import io.github.nightlyside.enstaunofficialguide.recyclerview.AssoListAdapter;
@@ -36,7 +38,6 @@ public class AssoListFragment extends Fragment {
     private RecyclerView recyclerView;
     private SearchView searchView;
     private AssoListAdapter assoListAdapter;
-    private List<Association> assoList = new ArrayList<>();
 
     private boolean isEditing;
 
@@ -62,7 +63,7 @@ public class AssoListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String query) {
                 // Here is where we are going to implement the filter logic
-                final List<Association> filteredModelList = filter(assoList, query);
+                final List<Association> filteredModelList = filter(CacheManager.getInstance().associationList, query);
                 assoListAdapter.replaceAll(filteredModelList);
                 recyclerView.scrollToPosition(0);
                 return true;
@@ -87,36 +88,12 @@ public class AssoListFragment extends Fragment {
     }
 
     private void getFullAssosList() {
-        String query_url = "asso-list.php";
-        NetworkManager.getInstance().makeJSONArrayRequest(query_url, new NetworkResponseListener<String>() {
-            @Override
-            public void getResult(String result) throws JSONException {
-                JSONArray response = new JSONArray(result);
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = response.getJSONObject(i);
-                    int col = Color.parseColor("#" + obj.getString("color"));
-
-                    // Creating the prez list
-                    HashSet<Integer> prezList = new HashSet<>();
-                    String[] id_list = obj.getString("presidents").split(",");
-                    for (String s : id_list) {
-                        prezList.add(Integer.valueOf(s.trim()));
-                    }
-
-                    Association a = new Association(obj.getInt("id"),
-                            obj.getString("name"),
-                            obj.getString("is_open_to_register").equals("1"),
-                            obj.getString("description"),
-                            col, prezList);
-                    assoList.add(a);
-                }
-                assoListAdapter.add(assoList);
-            }
-        });
+        assoListAdapter.add(CacheManager.getInstance().associationList);
     }
 
     private void getPrezAssosList() {
-        String query_url = "get-asso-list-as-presidenta.php?token=" + MainActivity.loggedUser.jwt_token;
+        List<Association> assoList = new ArrayList<>();
+        String query_url = "get-asso-list-as-president.php?token=" + MainActivity.loggedUser.jwt_token;
         NetworkManager.getInstance().makeJSONRequest(query_url, new NetworkResponseListener<String>() {
             @Override
             public void getResult(String result) throws JSONException {
@@ -138,7 +115,8 @@ public class AssoListFragment extends Fragment {
                                 obj.getString("name"),
                                 obj.getString("is_open_to_register").equals("1"),
                                 obj.getString("description"),
-                                col, prezList);
+                                col, prezList,
+                                obj.getInt("nb_members"));
                         assoList.add(a);
                     }
                     assoListAdapter.add(assoList);

@@ -57,6 +57,7 @@ public class NewsFragment extends Fragment {
                             obj.getString("title"),
                             obj.getString("date"),
                             obj.getString("display_name"),
+                            obj.getString("asso_name"),
                             obj.getString("texte"));
                     newsList.add(n);
                 }

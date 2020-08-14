@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -49,6 +50,8 @@ import java.util.List;
 
 import io.github.nightlyside.enstaunofficialguide.data_structure.Colloc;
 import io.github.nightlyside.enstaunofficialguide.R;
+import io.github.nightlyside.enstaunofficialguide.misc.Utils;
+import io.github.nightlyside.enstaunofficialguide.network.CacheManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
@@ -57,15 +60,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
     public static final int LOCATION_UPDATE_MIN_TIME = 5000;
 
-    private GoogleMap mMap;
+    public GoogleMap mMap;
     private FloatingActionButton iti_btn;
     private FloatingActionButton my_loc_btn;
     private FloatingActionButton nearest_btn;
-    private List<Colloc> collocs = new ArrayList<Colloc>();
-    private Colloc selected_colloc;
-    private boolean isMyLocationEnabled = false;
-    private Marker marker;
-    private List<Marker> collocsMarkers = new ArrayList<>();
+    private ProgressBar loadingSpinner;
+
+    public Colloc selected_colloc;
+    public boolean isMyLocationEnabled = false;
+    public Marker marker;
+    public List<Marker> collocsMarkers = new ArrayList<>();
 
     private LocationListener locationListener = new LocationListener() {
         @Override
@@ -149,42 +153,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         nearest_btn = findViewById(R.id.nearest_fab);
         nearest_btn.setEnabled(false);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        loadingSpinner = findViewById(R.id.loadingSpinner);
+        loadingSpinner.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        String query_string = "collocs.php";
-        NetworkManager.getInstance().makeJSONArrayRequest(query_string, new NetworkResponseListener<String>() {
-            @Override
-            public void getResult(String result) throws JSONException {
-                JSONArray response = new JSONArray(result);
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = null;
-                    try {
-                        // colloc construction
-                        obj = response.getJSONObject(i);
-                        int id = obj.getInt("id");
-                        String name = obj.getString("name");
-                        String adresse = obj.getString("adresse");
-                        String description = obj.getString("description");
-                        String bar_ou_colloc = obj.getString("colloc_ou_bar");
-
-                        Colloc col = new Colloc(id, name, adresse, description, bar_ou_colloc);
-                        collocs.add(col);
-
-                        // adding it on the map
-                        addCollocOnMap(col);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
         // Add a marker in Sydney and move the camera
-        LatLng pos_ensta_b = getLocationFromAddress(this, "ENSTA Bretagne Brest");
+        LatLng pos_ensta_b = Utils.getLocationFromAddress(this, "ENSTA Bretagne Brest");
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos_ensta_b, 13f));
 
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -234,6 +212,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 selectCollocMarker(closestMarker);
             }
         });
+
+        getCollocsPositions();
     }
 
     @Override
@@ -290,6 +270,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void getCollocsPositions() {
+        for (Colloc c : CacheManager.getInstance().collocList) {
+            addCollocOnMap(c);
+        }
+        loadingSpinner.setVisibility(View.GONE);
+    }
+
+    public void addCollocOnMap(Colloc col) {
+        Log.d("MapDebug", "Adding the colloc : " + col.name);
+
+        LatLng position = Utils.getLocationFromAddress(getApplicationContext(), col.adresse);
+        Log.d("MapDebug", "Adresse : " + col.adresse + " LatLong : " + position.toString());
+        collocsMarkers.add(mMap.addMarker(new MarkerOptions()
+                .position(position)
+                .title(col.name)
+                .snippet(col.description)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        ));
+    }
+
     private void drawMarker(Location location) {
         nearest_btn.setEnabled(true);
 
@@ -303,45 +303,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title("Position actuelle")
                     .flat(true));
         }
-    }
-
-    public LatLng getLocationFromAddress(Context context, String strAddress)
-    {
-        Geocoder coder= new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-
-        try
-        {
-            address = coder.getFromLocationName(strAddress, 5);
-            if(address==null)
-            {
-                return null;
-            }
-            Address location = address.get(0);
-            location.getLatitude();
-            location.getLongitude();
-
-            p1 = new LatLng(location.getLatitude(), location.getLongitude());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return p1;
-    }
-
-    public void addCollocOnMap(Colloc col) {
-        Log.d("MapDebug", "Adding the colloc : " + col.name);
-
-        LatLng position = getLocationFromAddress(this, col.adresse);
-        Log.d("MapDebug", "Adresse : " + col.adresse + " LatLong : " + position.toString());
-        collocsMarkers.add(mMap.addMarker(new MarkerOptions()
-                .position(position)
-                .title(col.name)
-                .snippet(col.description)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-        ));
     }
 
     @Override
@@ -359,6 +320,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void selectCollocMarker(Marker marker) {
         selected_colloc = null;
+        List<Colloc> collocs = CacheManager.getInstance().collocList;
         for (int i = 0; i < collocs.size(); i++) {
             if (collocs.get(i).name.equals(marker.getTitle())) {
                 selected_colloc = collocs.get(i);

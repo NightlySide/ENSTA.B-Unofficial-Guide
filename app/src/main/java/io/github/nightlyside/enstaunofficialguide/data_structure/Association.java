@@ -1,6 +1,8 @@
 package io.github.nightlyside.enstaunofficialguide.data_structure;
 
 import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.util.Linkify;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,19 +22,24 @@ public class Association {
     public int id;
     public String name;
     public boolean isOpenToRegister;
-    public String description;
+    public SpannableString description;
     public int color;
     public HashSet<Integer> presidents;
+    public int nb_members;
 
     static public List<Association> cache_associations = new ArrayList<>();
 
-    public Association(int id, String name, boolean isOpen, String description, int color, HashSet<Integer> presidents) {
+    public Association(int id, String name, boolean isOpen, String description, int color, HashSet<Integer> presidents, int nb_members) {
         this.id = id;
         this.name = name;
         this.isOpenToRegister = isOpen;
-        this.description = description;
         this.color = color;
         this.presidents = presidents;
+        this.nb_members = nb_members;
+
+        SpannableString span_desc = new SpannableString(description);
+        Linkify.addLinks(span_desc, Linkify.ALL);
+        this.description = span_desc;
     }
 
     static public Association getAssociationById(int id) {
@@ -63,7 +70,8 @@ public class Association {
                             obj.getString("name"),
                             obj.getString("is_open_to_register").equals("1"),
                             obj.getString("description"),
-                            col, prezList);
+                            col, prezList,
+                            obj.getInt("nb_members"));
 
                     // remove if alreay present
                     Association asToRemove = null;

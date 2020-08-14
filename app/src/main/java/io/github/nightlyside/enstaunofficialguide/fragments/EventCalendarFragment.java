@@ -30,6 +30,7 @@ import io.github.nightlyside.enstaunofficialguide.data_structure.AssoEvent;
 import io.github.nightlyside.enstaunofficialguide.data_structure.DateHelper;
 import io.github.nightlyside.enstaunofficialguide.dialogs.EditEventDialog;
 import io.github.nightlyside.enstaunofficialguide.dialogs.ShowEventDialog;
+import io.github.nightlyside.enstaunofficialguide.network.CacheManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkResponseListener;
 
@@ -44,8 +45,6 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
-    public List<AssoEvent> eventList = new ArrayList<>();
 
     public EventCalendarFragment() {}
 
@@ -81,33 +80,14 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
     }
 
     public void getEvents() {
-        eventList.clear();
+        // eventList.clear();
 
-        String query = "asso-events.php";
-        NetworkManager.getInstance().makeJSONArrayRequest(query, new NetworkResponseListener<String>() {
-            @Override
-            public void getResult(String object) throws JSONException {
-                JSONArray response = new JSONArray(object);
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = response.getJSONObject(i);
+        for (AssoEvent ae : CacheManager.getInstance().assoEventList) {
+            if (initFocusOnEventId != -1 && ae.id == initFocusOnEventId)
+                initFocusEvent = ae;
 
-                    AssoEvent ae = new AssoEvent(obj.getInt("id"),
-                            obj.getInt("asso_id"),
-                            obj.getString("title"),
-                            obj.getString("date_start"),
-                            obj.getString("date_end"),
-                            obj.getString("location"),
-                            obj.getString("description"));
-                    eventList.add(ae);
-
-                    if (initFocusOnEventId != -1 && obj.getInt("id") == initFocusOnEventId)
-                        initFocusEvent = ae;
-                }
-                calendarView.notifyDatasetChanged();
-
-                initFocusOnEventFunction();
-            }
-        });
+            initFocusOnEventFunction();
+        }
     }
 
     private void initFocusOnEventFunction() {
@@ -121,7 +101,7 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
         List<WeekViewEvent> weekEvents = new ArrayList<>();
         Log.d("CalendarDebug", "Year : " + year + " Month : " + month);
 
-        for (AssoEvent event : eventList) {
+        for (AssoEvent event : CacheManager.getInstance().assoEventList) {
             if (DateHelper.eventInMonth(event.startDate, event.endDate, year, month)) {
                 Log.d("CalendarDebug", "Found event : " + event.title);
                 WeekViewEvent wve = new WeekViewEvent(String.valueOf(event.id),
@@ -166,7 +146,7 @@ public class EventCalendarFragment extends Fragment implements MonthLoader.Month
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
         AssoEvent assoEvent = null;
-        for (AssoEvent ae : eventList) {
+        for (AssoEvent ae : CacheManager.getInstance().assoEventList) {
             if (ae.id == Integer.parseInt(event.getIdentifier())) {
                 assoEvent = ae;
             }

@@ -24,6 +24,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import com.android.volley.Cache;
 import com.google.android.material.navigation.NavigationView;
 
 import java.time.Duration;
@@ -43,6 +44,7 @@ import io.github.nightlyside.enstaunofficialguide.fragments.SettingsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditCollocsFragment;
 import io.github.nightlyside.enstaunofficialguide.fragments.ShowAndEditUsersFragment;
 import io.github.nightlyside.enstaunofficialguide.misc.RoleLevel;
+import io.github.nightlyside.enstaunofficialguide.network.CacheManager;
 import io.github.nightlyside.enstaunofficialguide.network.NetworkManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         NetworkManager.getInstance(this);
+        CacheManager.getInstance(this);
 
         loggedUser = User.getUserFromSharedPreferences(this);
         Association.updateAssociationLocalDB(object -> { invalidateOptionsMenu(); });
